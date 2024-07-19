@@ -38,7 +38,8 @@ jobs:
         uses: actions/cache@v4
         with:
           path: "**/*"
-          key: ${{ steps.activate-env.outputs.sha256 }}
+          key: Linux-micromamba-2f5f91b270d038a0fc4377fb93e26d28f7b2bdf73ddb35dc4fc170f7aafcc288-linux-64-args-4f53cda-root-dcc80ee-file-2f5f91b270d038a0fc4377fb93e26d28f7b2bdf73ddb35dc4fc170f7aafcc288
+          # key: ${{ steps.activate-env.outputs.sha256 }}
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
