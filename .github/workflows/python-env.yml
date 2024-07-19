@@ -29,6 +29,7 @@ jobs:
         uses: mamba-org/setup-micromamba@v1
         with:
           environment-file: ${{ steps.determine-env-file.outputs.env-file }}
+          environment-name: micromamba
           cache-environment: true
 
       - name: Calculate SHA-256 hash and put it in the script
@@ -37,6 +38,7 @@ jobs:
           envkey=$(shasum -a 256 "${{ steps.determine-env-file.outputs.env-file }}" | awk '{ print $1 }')
           echo "sha256=$sha256" >> $GITHUB_OUTPUT
           echo "echo \"sha256=$sha256\" > \$GITHUB_OUTPUT" > activate_env.sh
+          echo "echo \"cache-path=$GITHUB_WORKSPACE/.micromamba/envs/micromamba\" >> \$GITHUB_OUTPUT" >> activate_env.sh
 
       - name: register quarto in micromamba shell
         id: register-quarto
