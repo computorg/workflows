@@ -31,7 +31,7 @@ jobs:
           sha256=$(shasum -a 256 renv.lock | awk '{ print $1 }')
           tmpfile=$(mktemp)
           echo "${{ env.paths }}" > $tmpfile
-          content = $(cat $tmpfile)
+          content=$(cat $tmpfile)
           cache-path=$( jq -crRs '@json' <<< $content)
           echo "key=$sha256" >> $GITHUB_OUTPUT
           echo "cache-path=$cache-path" >> $GITHUB_OUTPUT
