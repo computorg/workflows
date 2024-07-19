@@ -60,7 +60,8 @@ jobs:
       - name: Install R Dependencies with renv
         if: steps.check-cache.outputs.cache-hit != 'true'
         uses: r-lib/actions/setup-renv@v2
-        bypass-cache: true
+        with:
+          bypass-cache: true
   
       - name: Cache environment
         if: steps.check-cache.outputs.cache-hit != 'true'
