@@ -42,8 +42,8 @@ jobs:
           cachepath=$( jq -crRs '@json' <<< "${{ env.paths }}")
           
           echo "echo \"key=micromamba-environment--linux-64-micromamba-args-4f53cda-root-dcc80ee-file-$sha256\" > \$GITHUB_OUTPUT" > activate_env.sh
-          echo "echo \"cache-path=$cachepath\" >> \$GITHUB_OUTPUT" >> activate_env.sh
-          
+          echo "echo cache-path=$cachepath >> \$GITHUB_OUTPUT" >> activate_env.sh
+
       - name: register quarto in micromamba shell
         id: register-quarto
         shell: micromamba-shell {0}

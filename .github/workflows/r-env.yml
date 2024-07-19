@@ -34,7 +34,7 @@ jobs:
           echo "cache-path=$cachepath" >> $GITHUB_OUTPUT
 
           echo "echo \"key=$sha256\" >> \$GITHUB_OUTPUT" > activate_env.sh
-          echo "echo \"cache-path=$cachepath\" >> \$GITHUB_OUTPUT" >> activate_env.sh
+          echo "echo cache-path=$cachepath >> \$GITHUB_OUTPUT" >> activate_env.sh
           echo "echo \"Rscript -e 'renv::restore()'\" > post-run.sh" >> activate_env.sh
           
       - name: Deploy an artifact
