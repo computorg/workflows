@@ -29,10 +29,7 @@ jobs:
             .Rprofile
         run: |
           sha256=$(shasum -a 256 renv.lock | awk '{ print $1 }')
-          tmpfile=$(mktemp)
-          echo "${{ env.paths }}" > $tmpfile
-          content=$(cat $tmpfile)
-          cachepath=$( jq -crRs '@json' <<< $content)
+          cachepath=$( jq -crRs '@json' <<< ${{ env.paths }})
           echo "key=$sha256" >> $GITHUB_OUTPUT
           echo "cache-path=$cachepath" >> $GITHUB_OUTPUT
 
@@ -48,7 +45,7 @@ jobs:
       - name: activate env artifact
         uses: actions/upload-artifact@v3
         with: 
-          name: artifact-cache
+          name: artifact-env
           path: activate_env.sh
 
       - name: Check Cache
