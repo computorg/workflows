@@ -37,9 +37,9 @@ jobs:
       - name: Restore Cache environment
         uses: actions/cache@v4
         with:
-          path: ${{ steps.activate-env.outputs.cache-path }}
           fail-on-cache-miss: true
-          key: micromamba-environment--linux-64-args-4f53cda-root-dcc80ee-file-${{ steps.activate-env.outputs.sha256 }}
+          path: ${{ steps.activate-env.outputs.cache-path }}
+          key: ${{ steps.activate-env.outputs.key }}
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
