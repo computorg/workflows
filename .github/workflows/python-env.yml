@@ -34,11 +34,16 @@ jobs:
 
       - name: Calculate SHA-256 hash and put it in the script
         id: calculate-hash
+        env: 
+          paths: |
+            $HOME/micromamba/envs/micromamba
         run: |
           sha256=$(shasum -a 256 "${{ steps.determine-env-file.outputs.env-file }}" | awk '{ print $1 }')
+          cachepath=$( jq -crRs '@json' <<< "${{ env.paths }}")
+          
           echo "echo \"key=micromamba-environment--linux-64-micromamba-args-4f53cda-root-dcc80ee-file-$sha256\" > \$GITHUB_OUTPUT" > activate_env.sh
-          echo "echo \"cache-path=$HOME/micromamba/envs/micromamba\" >> \$GITHUB_OUTPUT" >> activate_env.sh
-
+          echo "echo \"cache-path=$cachepath\" >> \$GITHUB_OUTPUT" >> activate_env.sh
+          
       - name: register quarto in micromamba shell
         id: register-quarto
         shell: micromamba-shell {0}

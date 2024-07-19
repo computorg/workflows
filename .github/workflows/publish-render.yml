@@ -38,7 +38,8 @@ jobs:
         uses: actions/cache@v4
         with:
           fail-on-cache-miss: true
-          path: ${{ steps.activate-env.outputs.cache-path }}
+          path: |
+            ${{ fromJson(steps.activate-env.outputs.cache-path) }}
           key: ${{ steps.activate-env.outputs.key }}
 
       - name: Eventual post-run
