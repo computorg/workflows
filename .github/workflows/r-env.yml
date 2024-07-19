@@ -42,8 +42,8 @@ jobs:
         with:
           r-version: '4.4.1'
 
-      - name: activate env artifact
-        uses: actions/upload-artifact@v3
+      - name: Deploy an artifact
+        uses: actions/upload-artifact@v4
         with: 
           name: artifact-env
           path: activate_env.sh
