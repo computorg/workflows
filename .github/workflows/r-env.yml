@@ -32,12 +32,12 @@ jobs:
           tmpfile=$(mktemp)
           echo "${{ env.paths }}" > $tmpfile
           content=$(cat $tmpfile)
-          cache-path=$( jq -crRs '@json' <<< $content)
+          cachepath=$( jq -crRs '@json' <<< $content)
           echo "key=$sha256" >> $GITHUB_OUTPUT
-          echo "cache-path=$cache-path" >> $GITHUB_OUTPUT
+          echo "cache-path=$cachepath" >> $GITHUB_OUTPUT
 
           echo "echo \"key=$sha256\" >> \$GITHUB_OUTPUT" > activate_env.sh
-          echo "echo \"cache-path=$cache-path\" >> \$GITHUB_OUTPUT" >> activate_env.sh
+          echo "echo \"cache-path=$cachepath\" >> \$GITHUB_OUTPUT" >> activate_env.sh
           echo "Rscript -e 'renv::restore()'" >> activate_env.sh
           
       - name: Install R
