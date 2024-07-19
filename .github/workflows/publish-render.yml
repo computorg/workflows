@@ -37,7 +37,7 @@ jobs:
       - name: Restore Cache environment
         uses: actions/cache@v4
         with:
-          path: **
+          path: "**/*"
           key: ${{ steps.activate-env.outputs.sha256 }}
 
       - name: Set up Quarto
