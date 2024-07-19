@@ -41,6 +41,10 @@ jobs:
           path: ${{ steps.activate-env.outputs.cache-path }}
           key: ${{ steps.activate-env.outputs.key }}
 
+      - name: Eventual post-run
+        run: |
+          [ -z ${{ runner.temp }}/post-run.sh ] || source ${{ runner.temp }}/post-run.sh
+      
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
         with:
