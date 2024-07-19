@@ -34,7 +34,8 @@ jobs:
             .Rprofile
         run: |
           sha256=$(shasum -a 256 renv.lock | awk '{ print $1 }')
-          cache-path=$( jq -crRs '@json' <<< ${{ env.paths }})
+          cat 
+          cache-path=$( jq -crRs '@json' <<< "${{ env.paths }}")
           echo "key=$sha256" >> $GITHUB_OUTPUT
           echo "cache-path=$cache-path" >> $GITHUB_OUTPUT
 
