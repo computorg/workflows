@@ -1,0 +1,57 @@
+name: python
+
+on:
+  repository_dispatch:
+    types: [custom-event] 
+  workflow_call:
+    inputs:
+      config-path:
+        required: true
+        type: string
+    secrets:
+      token:
+        required: true
+
+jobs:
+  dependencies:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Determine environment file
+        id: determine-env-file
+        run: echo "::set-output name=env-file::$(if [[ -f requirement.txt ]]; then echo requirement.txt; else echo environment.yml; fi)"
+
+      - name: Set up micromamba
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: ${{ steps.determine-env-file.outputs.env-file }}
+          cache-environment: true
+
+      - name: register quarto in micromamba shell
+        shell: micromamba-shell {0}
+        run: |
+          hash=$(shasum -a 256 "${{ steps.determine-env-file.outputs.env-file }}" | awk '{ print $1 }')
+          echo "sha256=${{ runner.os }}-micromamba-$hash" >> $GITHUB_OUTPUT
+          echo "echo \"QUARTO_PYTHON=$(which python)\" >> \$GITHUB_ENV" > activate_env.sh
+          echo "echo \"PATH=$PATH\" >> \$GITHUB_ENV" >> activate_env.sh
+          echo "echo \"sha256=${{ runner.os }}-micromamba-$hash\ >> \$GITHUB_OUTPUT" >> activate_env.sh
+
+      - name: Cache environment
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/micromamba-bin/
+            ~/micromamba/
+            ~/work/_temp/setup-micromamba/
+          key: ${{ steps.determine-env-file.outputs.sha256 }}
+        
+      - name: Deploy an artifact
+        uses: actions/upload-artifact@v3
+        with: 
+          name: artifact-env
+          path: activate_env.sh
+

@@ -1,0 +1,53 @@
+name: R
+
+on:
+  repository_dispatch:
+    types: [custom-event]
+  workflow_call:
+    inputs:
+      config-path:
+        required: true
+        type: string
+    secrets:
+      token:
+        required: true
+
+jobs:
+  dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Install R
+        uses: r-lib/actions/setup-r@v2
+        with:
+          r-version: '4.4.1'
+      - name: Install R Dependencies with renv
+        uses: r-lib/actions/setup-renv@v2
+
+      - name: Calculate SHA-256 hash and put it in the script
+        id: calculate-hash
+        run: |
+          hash=$(shasum -a 256 ~/renv.lock | awk '{ print $1 }')
+          sha256=${{ runner.os }}-renv-$hash
+          echo "sha256=$sha256" >> $GITHUB_OUTPUT
+
+          echo "echo \"sha256=$sha256\" >> \$GITHUB_OUTPUT" > activate_env.sh
+          echo "Rscript -e 'renv::restore()'" >> activate_env.sh
+
+      - name: activate env artifact
+        uses: actions/upload-artifact@v3
+        with: 
+          name: artifact-cache
+          path: activate_env.sh
+
+      - name: Cache environment
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/renv.lock
+            /home/runner/work/_temp/renv
+            /home/runner/.Rprofile
+          key: ${{ steps.calculate-hash.outputs.sha256 }}

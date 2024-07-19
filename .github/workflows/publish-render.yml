@@ -1,0 +1,70 @@
+name: computo-publish
+
+on:
+  workflow_call:
+    inputs:
+      config-path:
+        required: true
+        type: string
+    secrets:
+      token:
+        required: true
+
+# you need these permissions to publish to GitHub pages
+permissions: 
+  contents: write
+  pages: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Restore artifact
+        uses: actions/download-artifact@v3
+        with: 
+          name: artifact-env
+          path: ${{ runner.temp }}/
+
+      - name: Activate the environment from the cache with the script in the artifact
+        id: activate-env
+        run: source ${{ runner.temp }}/activate_env.sh
+
+      - name: Restore Cache environment
+        uses: actions/cache@v4
+        with:
+          path: **
+          key: ${{ steps.activate-env.outputs.sha256 }}
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+        with:
+          tinytex: true
+
+      - name: Register TinyTeX and install the Libertinus font
+        run: |
+          mkdir -p ~/.local/bin
+          ~/.TinyTeX/bin/x86_64-linux/tlmgr option sys_bin ~/.local/bin
+          ~/.TinyTeX/bin/x86_64-linux/tlmgr path add
+          ~/.TinyTeX/bin/x86_64-linux/tlmgr update --self
+          ~/.TinyTeX/bin/x86_64-linux/tlmgr install libertinus-fonts
+
+      - name: Install Computo extension for Quarto
+        run: |
+          quarto add --no-prompt computorg/computo-quarto-extension
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "computo@sfds.asso.fr"
+          git config --global user.name "computo-github-actions"
+
+      - name: render and publish
+        uses: quarto-dev/quarto-actions/publish@v2
+        with:
+          target: gh-pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
