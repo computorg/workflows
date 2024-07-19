@@ -39,7 +39,7 @@ jobs:
           echo "sha256=${{ runner.os }}-micromamba-$hash" >> $GITHUB_OUTPUT
           echo "echo \"QUARTO_PYTHON=$(which python)\" > \$GITHUB_ENV" > activate_env.sh
           echo "echo \"PATH=$PATH\" >> \$GITHUB_ENV" >> activate_env.sh
-          echo "echo \"sha256=${{ runner.os }}-micromamba-$hash\ >> \$GITHUB_OUTPUT" >> activate_env.sh
+          echo "echo \"sha256=${{ runner.os }}-micromamba-$hash\" >> \$GITHUB_OUTPUT" >> activate_env.sh
 
       - name: Cache environment
         uses: actions/cache@v4
