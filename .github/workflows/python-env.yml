@@ -32,11 +32,12 @@ jobs:
           cache-environment: true
 
       - name: register quarto in micromamba shell
+        id: register-quarto
         shell: micromamba-shell {0}
         run: |
           hash=$(shasum -a 256 "${{ steps.determine-env-file.outputs.env-file }}" | awk '{ print $1 }')
           echo "sha256=${{ runner.os }}-micromamba-$hash" >> $GITHUB_OUTPUT
-          echo "echo \"QUARTO_PYTHON=$(which python)\" >> \$GITHUB_ENV" > activate_env.sh
+          echo "echo \"QUARTO_PYTHON=$(which python)\" > \$GITHUB_ENV" > activate_env.sh
           echo "echo \"PATH=$PATH\" >> \$GITHUB_ENV" >> activate_env.sh
           echo "echo \"sha256=${{ runner.os }}-micromamba-$hash\ >> \$GITHUB_OUTPUT" >> activate_env.sh
 
@@ -47,7 +48,7 @@ jobs:
             ~/micromamba-bin/
             ~/micromamba/
             ~/work/_temp/setup-micromamba/
-          key: ${{ steps.determine-env-file.outputs.sha256 }}
+          key: ${{ steps.register-quarto.outputs.sha256 }}
         
       - name: Deploy an artifact
         uses: actions/upload-artifact@v3
