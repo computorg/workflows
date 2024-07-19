@@ -25,20 +25,18 @@ jobs:
         id: determine-env-file
         run: echo "::set-output name=env-file::$(if [[ -f requirement.txt ]]; then echo requirement.txt; else echo environment.yml; fi)"
 
-      - name: Calculate SHA-256 hash and put it in the script
-        id: calculate-hash
-        run: |
-          hash=$(shasum -a 256 "${{ steps.determine-env-file.outputs.env-file }}" | awk '{ print $1 }')
-          sha256=${{ runner.os }}-micromamba-$hash
-          echo "sha256=$sha256" >> $GITHUB_OUTPUT
-          echo "echo \"sha256=$sha256\" > \$GITHUB_OUTPUT" >> activate_env.sh
-
       - name: Set up micromamba
         uses: mamba-org/setup-micromamba@v1
         with:
           environment-file: ${{ steps.determine-env-file.outputs.env-file }}
-          cache-environment-key: ${{ steps.calculate-hash.outputs.sha256 }}
           cache-environment: true
+
+      - name: Calculate SHA-256 hash and put it in the script
+        id: calculate-hash
+        run: |
+          envkey=$(shasum -a 256 "${{ steps.determine-env-file.outputs.env-file }}" | awk '{ print $1 }')
+          echo "sha256=$sha256" >> $GITHUB_OUTPUT
+          echo "echo \"sha256=$sha256\" > \$GITHUB_OUTPUT" > activate_env.sh
 
       - name: register quarto in micromamba shell
         id: register-quarto
