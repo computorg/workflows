@@ -41,6 +41,7 @@ jobs:
           fail-on-cache-miss: true
           enableCrossOsArchive: true
           key: micromamba-environment--linux-64-args-4f53cda-root-dcc80ee-file-2f5f91b270d038a0fc4377fb93e26d28f7b2bdf73ddb35dc4fc170f7aafcc288
+          restore-keys : micromamba-environment-
           # key: ${{ steps.activate-env.outputs.sha256 }}
 
       - name: Set up Quarto
