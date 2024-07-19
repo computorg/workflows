@@ -19,11 +19,11 @@ jobs:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Determine environment file
         id: determine-env-file
-        run: echo "::set-output name=env-file::$(if [[ -f requirement.txt ]]; then echo requirement.txt; else echo environment.yml; fi)"
+        run: echo "env-file=$(if [[ -f requirement.txt ]]; then echo requirement.txt; else echo environment.yml; fi)" >> $GITHUB_OUTPUT
 
       - name: Set up micromamba
         uses: mamba-org/setup-micromamba@v1
@@ -46,7 +46,7 @@ jobs:
           echo "echo \"PATH=$PATH\" >> \$GITHUB_ENV" >> activate_env.sh
         
       - name: Deploy an artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with: 
           name: artifact-env
           path: activate_env.sh
