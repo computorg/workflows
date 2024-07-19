@@ -24,14 +24,14 @@ jobs:
         id: calculate-hash
         env: 
           paths: |
-            EOF
             renv.lock
             /home/runner/work/_temp/renv
             .Rprofile
-            EOF
         run: |
           sha256=$(shasum -a 256 renv.lock | awk '{ print $1 }')
-          cache-path=$( jq -crRs '@json' <<${{ env.paths }})
+          tmpfile=$(mktemp)
+          echo "${{ env.paths }}" > $tmpfile
+          cache-path=$( jq -crRs '@json' <<< $(cat $tmpfile))
           echo "key=$sha256" >> $GITHUB_OUTPUT
           echo "cache-path=$cache-path" >> $GITHUB_OUTPUT
 
