@@ -37,7 +37,7 @@ jobs:
         uses: mamba-org/setup-micromamba@v1
         with:
           environment-file: ${{ steps.determine-env-file.outputs.env-file }}
-          cache-environment-key: environment-${{ steps.calculate-hash.outputs.sha256 }}
+          cache-environment-key: ${{ steps.calculate-hash.outputs.sha256 }}
           cache-environment: true
 
       - name: register quarto in micromamba shell
