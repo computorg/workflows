@@ -26,15 +26,23 @@ jobs:
           r-version: '4.4.1'
       - name: Install R Dependencies with renv
         uses: r-lib/actions/setup-renv@v2
+        bypass-cache: true
 
       - name: Calculate SHA-256 hash and put it in the script
         id: calculate-hash
+        env: 
+          paths: |
+            ~/renv.lock
+            /home/runner/work/_temp/renv
+            /home/runner/.Rprofile
         run: |
-          hash=$(shasum -a 256 ~/renv.lock | awk '{ print $1 }')
-          sha256=${{ runner.os }}-renv-$hash
-          echo "sha256=$sha256" >> $GITHUB_OUTPUT
+          sha256=$(shasum -a 256 ~/renv.lock | awk '{ print $1 }')
+          cache-path=$( jq -crRs '@json' <<< ${{ env.paths }})
+          echo "key=$sha256" >> $GITHUB_OUTPUT
+          echo "cache-path=$cache-path" >> $GITHUB_OUTPUT
 
-          echo "echo \"sha256=$sha256\" >> \$GITHUB_OUTPUT" > activate_env.sh
+          echo "echo \"key=$sha256\" >> \$GITHUB_OUTPUT" > activate_env.sh
+          echo "echo \"cache-path=$cache-path\" >> \$GITHUB_OUTPUT" >> activate_env.sh
           echo "Rscript -e 'renv::restore()'" >> activate_env.sh
 
       - name: activate env artifact
@@ -47,7 +55,5 @@ jobs:
         uses: actions/cache@v4
         with:
           path: |
-            ~/renv.lock
-            /home/runner/work/_temp/renv
-            /home/runner/.Rprofile
-          key: ${{ steps.calculate-hash.outputs.sha256 }}
+            ${{ fromJson(steps.calculate-hash.outputs.cache-path) }}
+          key: ${{ steps.calculate-hash.outputs.key }}
