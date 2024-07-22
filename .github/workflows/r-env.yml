@@ -25,7 +25,7 @@ jobs:
         env: 
           paths: |
             renv.lock
-            /home/runner/work/_temp/renv
+            renv
             .Rprofile
         run: |
           sha256=$(shasum -a 256 renv.lock | awk '{ print $1 }')
@@ -34,7 +34,6 @@ jobs:
           echo "cache-path=$cachepath" >> $GITHUB_OUTPUT
 
           echo "echo \"key=$sha256\" >> \$GITHUB_OUTPUT" > activate_env.sh
-          echo "ln -s /home/runner/work/_temp/renv/library $GITHUB_WORKSPACE/renv/library" >> activate_env.sh          
           echo "echo cache-path='$cachepath' >> \$GITHUB_OUTPUT" >> activate_env.sh
                     
       - name: Deploy an artifact
