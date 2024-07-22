@@ -40,16 +40,16 @@ jobs:
             echo "env-file=environment.yml" >> $GITHUB_OUTPUT
             cat environment.yml >> tohash.txt
           fi
-          if [[ -f environment.yaml ]] || [[ -f requirements.txt ]]; then
+          if [[ -f environment.yml ]] || [[ -f requirements.txt ]]; then
             echo "python=true" >> $GITHUB_OUTPUT
-            cat ${{ env.paths-python }} >> paths.sh
+            echo "${{ env.paths-python }}" >> paths.sh
             echo "echo \"QUARTO_PYTHON=/home/runner/micromamba/envs/micromamba/bin/python\" > \$GITHUB_ENV" >> activate_env.sh
             echo "echo \"RETICULATE_PYTHON=/home/runner/micromamba/envs/micromamba/bin/python\" > \$GITHUB_ENV" >> activate_env.sh
             echo "echo \"PATH=/home/runner/micromamba/envs/micromamba/bin:\$PATH\" >> \$GITHUB_ENV" >> activate_env.sh
           fi            
           if [[ -f renv.lock ]]; then
             echo "r=true" >> $GITHUB_OUTPUT
-            cat ${{ env.paths-r }} >> paths.sh
+            echo "${{ env.paths-r }}" >> paths.sh
             cat renv.lock >> tohash.txt
             ln -s $GITHUB_WORKSPACE/renv /home/runner/work/_temp
           fi
