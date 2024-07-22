@@ -32,7 +32,7 @@ jobs:
           touch activate_env.sh
           touch paths.sh
           touch tohash.txt
-          if [[ -f requirement.txt ]]; then
+          if [[ -f requirements.txt ]]; then
             echo "env-file=requirement.txt" >> $GITHUB_OUTPUT
             cat requirement.txt >> tohash.txt
           fi
