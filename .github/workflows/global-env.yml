@@ -1,0 +1,99 @@
+name: global-env
+
+on:
+  repository_dispatch:
+    types: [custom-event]
+  workflow_call:
+    inputs:
+      config-path:
+        required: true
+        type: string
+    secrets:
+      token:
+        required: true
+
+jobs:
+  dependencies:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: check environment files
+        id: check-env-files
+        env:
+            paths-python: $HOME/micromamba/envs/micromamba
+            paths-r: |
+              renv.lock
+              renv
+              .Rprofile
+        run: |
+          touch activate_env.sh
+          touch paths.sh
+          touch tohash.txt
+          if [[ -f requirement.txt ]]; then
+            echo "env-file=requirement.txt" >> $GITHUB_OUTPUT
+            cat requirement.txt >> tohash.txt
+          fi
+          if [[ -f environment.yml ]]; then
+            echo "env-file=environment.yml" >> $GITHUB_OUTPUT
+            cat environment.yml >> tohash.txt
+          fi
+          if [[ -f environment.yaml -o -f requirements.txt ]]; then
+            echo "python=true" >> $GITHUB_OUTPUT
+            cat ${{ env.paths-python }} >> paths.sh
+            echo "echo \"QUARTO_PYTHON=/home/runner/micromamba/envs/micromamba/bin/python\" > \$GITHUB_ENV" >> activate_env.sh
+            echo "echo \"RETICULATE_PYTHON=/home/runner/micromamba/envs/micromamba/bin/python\" > \$GITHUB_ENV" >> activate_env.sh
+            echo "echo \"PATH=/home/runner/micromamba/envs/micromamba/bin:\$PATH\" >> \$GITHUB_ENV" >> activate_env.sh
+          fi            
+          if [[ -f renv.lock ]]; then
+            echo "r=true" >> $GITHUB_OUTPUT
+            cat ${{ env.paths-r }} >> paths.sh
+            cat renv.lock >> tohash.txt
+            ln -s $GITHUB_WORKSPACE/renv /home/runner/work/_temp
+          fi
+
+          cachepath=$(jq -crRs '@json' <<< "$(cat paths.sh)")
+          echo "cache-path=$cachepath" >> $GITHUB_OUTPUT
+          echo "echo cache-path='$cachepath' >> \$GITHUB_OUTPUT" >> activate_env.sh
+
+          sha256=$(shasum -a 256 tohash.txt | awk '{ print $1 }')
+          echo "echo \"key=$sha256\" >> \$GITHUB_OUTPUT" >> activate_env.sh
+                    
+      - name: Check Cache already exists
+        id: check-cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ fromJson(steps.check-env-files.outputs.cache-path) }}
+          key: ${{ steps.check-env-files.outputs.key }}
+          lookup-only: true
+
+      - name: Install R Dependencies with renv (no cache)
+        if: steps.check-cache.outputs.cache-hit != 'true' && steps.check-env-files.outputs.r == 'true'
+        uses: r-lib/actions/setup-renv@v2
+        with:
+          bypass-cache: true
+  
+      - name: Set up micromamba (no cache)
+        if: steps.check-cache.outputs.cache-hit != 'true' && steps.check-env-files.outputs.python == 'true'
+        uses: mamba-org/setup-micromamba@v1
+        with:
+          environment-file: ${{ steps.check-env-files.outputs.env-file }}
+          environment-name: micromamba
+          cache-environment: false
+          cache-downloads: false
+
+      - name: Check Cache
+        uses: actions/cache@v4
+        with:
+            path: |
+                ${{ fromJson(steps.check-env-files.outputs.cache-path) }}
+            key: ${{ steps.check-env-files.outputs.key }}
+  
+      - name: Deploy an artifact
+        uses: actions/upload-artifact@v4
+        with: 
+          name: artifact-env
+          path: activate_env.sh
