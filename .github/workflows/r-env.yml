@@ -25,7 +25,7 @@ jobs:
         env: 
           paths: |
             renv.lock
-            /home/runner/work/_temp/renv
+            /home/runner/work/renv
             .Rprofile
         run: |
           sha256=$(shasum -a 256 renv.lock | awk '{ print $1 }')
