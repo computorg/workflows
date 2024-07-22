@@ -40,7 +40,7 @@ jobs:
             echo "env-file=environment.yml" >> $GITHUB_OUTPUT
             cat environment.yml >> tohash.txt
           fi
-          if [[ -f environment.yaml -o -f requirements.txt ]]; then
+          if [[ -f environment.yaml ]] || [[ -f requirements.txt ]]; then
             echo "python=true" >> $GITHUB_OUTPUT
             cat ${{ env.paths-python }} >> paths.sh
             echo "echo \"QUARTO_PYTHON=/home/runner/micromamba/envs/micromamba/bin/python\" > \$GITHUB_ENV" >> activate_env.sh
