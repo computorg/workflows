@@ -59,6 +59,7 @@ jobs:
           echo "echo cache-path='$cachepath' >> \$GITHUB_OUTPUT" >> activate_env.sh
 
           sha256=$(shasum -a 256 tohash.txt | awk '{ print $1 }')
+          echo "key=$sha256" >> $GITHUB_OUTPUT
           echo "echo \"key=$sha256\" >> \$GITHUB_OUTPUT" >> activate_env.sh
                     
       - name: Check Cache already exists
