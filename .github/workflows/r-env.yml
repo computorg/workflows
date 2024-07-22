@@ -34,7 +34,7 @@ jobs:
           echo "cache-path=$cachepath" >> $GITHUB_OUTPUT
 
           echo "echo \"key=$sha256\" >> \$GITHUB_OUTPUT" > activate_env.sh
-          echo "echo \"RENV_PATHS_ROOT=/home/runner/work/_temp/renv\" >> \$GITHUB_ENV >> activate_env.sh
+          echo "echo \"RENV_PATHS_ROOT=/home/runner/work/_temp/renv\" >> \$GITHUB_ENV" >> activate_env.sh
           echo "echo cache-path='$cachepath' >> \$GITHUB_OUTPUT" >> activate_env.sh
                     
       - name: Deploy an artifact
