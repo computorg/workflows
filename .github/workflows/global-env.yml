@@ -87,6 +87,7 @@ jobs:
           cache-downloads: false
 
       - name: Check Cache
+        if: steps.check-cache.outputs.cache-hit != 'true'
         uses: actions/cache@v4
         with:
             path: |
