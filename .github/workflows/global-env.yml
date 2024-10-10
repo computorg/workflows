@@ -53,8 +53,8 @@ jobs:
             cat renv.lock >> tohash.txt
             if [[ ! -d renv ]]; then
               echo "R_LIBS_USER=/home/runner/work/_temp/rlib" >> $GITHUB_ENV
+              mkdir /home/runner/work/_temp/rlib
               mkdir $GITHUB_WORKSPACE/renv
-              mkdir $GITHUB_WORKSPACE/rlib
             fi
             ln -s $GITHUB_WORKSPACE/renv /home/runner/work/_temp
           fi
