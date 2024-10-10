@@ -71,6 +71,12 @@ jobs:
           key: ${{ steps.check-env-files.outputs.key }}
           lookup-only: true
 
+      - name: install any manual dependencies from setup-env-ci.sh
+        run: |
+          if [[ -f setup-env-ci.sh ]]; then
+            bash setup-env-ci.sh
+          fi
+
       - name: Install R Dependencies with renv (no cache)
         if: steps.check-cache.outputs.cache-hit != 'true' && steps.check-env-files.outputs.r == 'true'
         uses: r-lib/actions/setup-renv@v2

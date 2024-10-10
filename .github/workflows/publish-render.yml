@@ -47,13 +47,11 @@ jobs:
         with:
           tinytex: true
 
-      - name: Register TinyTeX and install the Libertinus font
+      - name: run any post-setup commands from setup-render-ci.sh
         run: |
-          mkdir -p ~/.local/bin
-          ~/.TinyTeX/bin/x86_64-linux/tlmgr option sys_bin ~/.local/bin
-          ~/.TinyTeX/bin/x86_64-linux/tlmgr path add
-          ~/.TinyTeX/bin/x86_64-linux/tlmgr update --self
-          ~/.TinyTeX/bin/x86_64-linux/tlmgr install libertinus-fonts
+          if [[ -f setup-render-ci.sh ]]; then
+            bash setup-render-ci.sh
+          fi
 
       - name: Install Computo extension for Quarto
         run: |
