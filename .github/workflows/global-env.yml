@@ -54,9 +54,8 @@ jobs:
             if [ -d renv ]; then
               ln -s $GITHUB_WORKSPACE/renv /home/runner/work/_temp
             else
-              echo "R_LIBS_USER=/home/runner/work/_temp/rlib" >> $GITHUB_ENV
+              echo "R_LIBS_USER=/home/runner/work/_temp/renv" >> $GITHUB_ENV
               mkdir /home/runner/work/_temp/renv
-              mkdir /home/runner/work/_temp/rlib
             fi
           fi
 
