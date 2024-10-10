@@ -51,7 +51,11 @@ jobs:
             echo "r=true" >> $GITHUB_OUTPUT
             echo "${{ env.paths-r }}" >> paths.sh
             cat renv.lock >> tohash.txt
-            ln -s $GITHUB_WORKSPACE/renv /home/runner/work/_temp
+            if [ -d renv ]; then
+              ln -s $GITHUB_WORKSPACE/renv /home/runner/work/_temp
+            else
+              mkdir /home/runner/work/_temp/renv
+            fi
           fi
 
           cachepath=$(jq -crRs '@json' <<< "$(cat paths.sh)")
