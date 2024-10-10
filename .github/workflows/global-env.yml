@@ -51,12 +51,12 @@ jobs:
             echo "r=true" >> $GITHUB_OUTPUT
             echo "${{ env.paths-r }}" >> paths.sh
             cat renv.lock >> tohash.txt
-            if [ -d renv ]; then
-              ln -s $GITHUB_WORKSPACE/renv /home/runner/work/_temp
-            else
-              echo "R_LIBS_USER=/home/runner/work/_temp/renv" >> $GITHUB_ENV
-              mkdir /home/runner/work/_temp/renv
+            if [[ ! -d renv ]]; then
+              echo "R_LIBS_USER=/home/runner/work/_temp/rlib" >> $GITHUB_ENV
+              mkdir $GITHUB_WORKSPACE/renv
+              mkdir $GITHUB_WORKSPACE/rlib
             fi
+            ln -s $GITHUB_WORKSPACE/renv /home/runner/work/_temp
           fi
 
           cachepath=$(jq -crRs '@json' <<< "$(cat paths.sh)")
@@ -87,6 +87,7 @@ jobs:
         uses: r-lib/actions/setup-renv@v2
         with:
           bypass-cache: true
+          working-directory: 
   
       - name: Set up micromamba (no cache)
         if: steps.check-cache.outputs.cache-hit != 'true' && steps.check-env-files.outputs.python == 'true'
