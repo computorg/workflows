@@ -29,7 +29,8 @@ jobs:
               renv
               .Rprofile
               /opt/R
-              /usr/local
+              /usr/local/bin/R
+              /usr/local/bin/Rscript
         run: |
           touch activate_env.sh
           touch paths.sh
