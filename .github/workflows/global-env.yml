@@ -28,6 +28,8 @@ jobs:
               renv.lock
               renv
               .Rprofile
+              /opt/R
+              /usr/local
         run: |
           touch activate_env.sh
           touch paths.sh
@@ -52,8 +54,6 @@ jobs:
             echo "${{ env.paths-r }}" >> paths.sh
             cat renv.lock >> tohash.txt
             if [[ ! -d renv ]]; then
-              echo "R_LIBS_USER=/home/runner/work/_temp/rlib" >> $GITHUB_ENV
-              mkdir /home/runner/work/_temp/rlib
               mkdir $GITHUB_WORKSPACE/renv
             fi
             ln -s $GITHUB_WORKSPACE/renv /home/runner/work/_temp
