@@ -58,6 +58,7 @@ jobs:
               mkdir $GITHUB_WORKSPACE/renv
             fi
             ln -s $GITHUB_WORKSPACE/renv /home/runner/work/_temp
+            echo "sudo apt-get install -y qpdf devscripts ghostscript libblas3" >> activate_env.sh
           fi
 
           cachepath=$(jq -crRs '@json' <<< "$(cat paths.sh)")
