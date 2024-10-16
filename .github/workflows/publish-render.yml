@@ -63,7 +63,10 @@ jobs:
 
       - name: Install Computo extension for Quarto
         run: |
-          quarto add --no-prompt computorg/computo-quarto-extension
+          if [[ ! -f .nocomputo ]]; then
+            quarto add --no-prompt computorg/computo-quarto-extension
+          fi
+
 
       - name: render and publish
         uses: quarto-dev/quarto-actions/publish@v2
