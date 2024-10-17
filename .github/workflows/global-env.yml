@@ -100,7 +100,7 @@ jobs:
   
       - name: Set up micromamba (no cache)
         if: steps.check-cache.outputs.cache-hit != 'true' && steps.check-env-files.outputs.python == 'true'
-        uses: mamba-org/setup-micromamba@v1
+        uses: mamba-org/setup-micromamba@v2
         with:
           environment-file: ${{ steps.check-env-files.outputs.env-file }}
           environment-name: micromamba
