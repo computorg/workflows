@@ -2,7 +2,7 @@ name: Main Workflows
 
 on:
   push:
-    branches: ["main"]
+    branches: ["main","master"]
   repository_dispatch:
     types: [custom-event] 
   workflow_dispatch:
