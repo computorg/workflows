@@ -59,6 +59,9 @@ jobs:
             quarto add --no-prompt computorg/computo-quarto-extension
           fi
 
+      - name: Render
+        run: quarto render --output-dir=public
+
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
