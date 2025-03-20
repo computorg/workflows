@@ -52,7 +52,9 @@ jobs:
           fi
 
       - name: Render
-        run: quarto render --output-dir=public
+        run: |
+          quarto render --output-dir=public
+          cp ./public/*.html ./public/index.html
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
