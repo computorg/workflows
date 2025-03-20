@@ -10,11 +10,7 @@ on:
       token:
         required: true
 
-# you need these permissions to publish to GitHub pages
-permissions: 
-  contents: write
-  pages: write
-  id-token: write
+
 
 jobs:
   build:
@@ -70,6 +66,10 @@ jobs:
   
     # Deployment job
   deploy:
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
