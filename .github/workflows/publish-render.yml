@@ -10,6 +10,12 @@ on:
       token:
         required: true
 
+# you need these permissions to publish to GitHub pages
+permissions: 
+  contents: write
+  pages: write
+  id-token: write
+
 jobs:
   build:
     runs-on: ubuntu-latest
