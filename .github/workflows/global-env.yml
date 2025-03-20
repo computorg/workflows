@@ -1,13 +1,7 @@
 name: global-env
 
 on:
-  repository_dispatch:
-    types: [custom-event]
   workflow_call:
-    inputs:
-      config-path:
-        required: true
-        type: string
 
 jobs:
   dependencies:

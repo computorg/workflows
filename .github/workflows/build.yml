@@ -6,21 +6,12 @@ on:
   repository_dispatch:
     types: [custom-event] 
   workflow_dispatch:
+  pull_request:
+    branches: ["main","master"]
 
-permissions:
-  contents: write
-  pages: write
-  id-token: write
-  
 jobs:
   call_env_workflow:
     uses: computorg/workflows/.github/workflows/global-env.yml@main
-    secrets: inherit
-    with:
-      config-path: './config/quarto_config.yml'
   call_quartopublish_workflow:
     uses: computorg/workflows/.github/workflows/publish-render.yml@main
     needs: call_env_workflow
-    with:
-      config-path: './config/quarto_config.yml'
-    secrets: inherit
