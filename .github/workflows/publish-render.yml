@@ -59,10 +59,19 @@ jobs:
             quarto add --no-prompt computorg/computo-quarto-extension
           fi
 
-
-      - name: render and publish
-        uses: quarto-dev/quarto-actions/publish@v2
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          target: gh-pages
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          path: ./public
+  
+    # Deployment job
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
