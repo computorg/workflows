@@ -59,6 +59,8 @@ jobs:
   
     # Deployment job
   deploy:
+    # skip this job if the event that triggered the workflow is a pull request
+    if: github.event_name != 'pull_request'
     permissions:
       pages: write
       id-token: write
