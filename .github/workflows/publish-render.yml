@@ -50,14 +50,12 @@ jobs:
       - name: Render
         run: |
           quarto render --output-dir=public
-          cp ./public/*.html ./public/index.html
+          if [[ ! -f ./public/index.html ]]; then
+            echo "No index.html found in public directory. copying the first HTML file."
+            cp -s $(ls ./public/*.html | head -n 1) ./public/index.html
+          fi
 
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: ./public
-  
-    # Deployment job
+  # Deployment job
   deploy:
     # skip this job if the event that triggered the workflow is a pull request
     if: github.event_name != 'pull_request'
