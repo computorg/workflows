@@ -52,7 +52,7 @@ jobs:
           quarto render --output-dir=public
           if [[ ! -f ./public/index.html ]]; then
             echo "No index.html found in public directory. copying the first HTML file."
-            cp -s $(ls ./public/*.html | head -n 1) ./public/index.html
+            cp $(ls ./public/*.html | head -n 1) ./public/index.html
           fi
           
       - name: Upload artifact
