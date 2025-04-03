@@ -54,6 +54,11 @@ jobs:
             echo "No index.html found in public directory. copying the first HTML file."
             cp -s $(ls ./public/*.html | head -n 1) ./public/index.html
           fi
+          
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./public
 
   # Deployment job
   deploy:
