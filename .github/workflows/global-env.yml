@@ -69,11 +69,21 @@ jobs:
           key: ${{ steps.check-env-files.outputs.key }}
           lookup-only: true
 
+      - name: Extract R version from renv.lock
+        id: extract-r-version
+        if: steps.check-env-files.outputs.r == 'true'
+        run: |
+          R_VERSION=$(jq -r '.R.Version // empty' renv.lock)
+          if [[ -z "$R_VERSION" ]]; then
+            R_VERSION="4.5.0"
+          fi
+          echo "r-version=$R_VERSION" >> $GITHUB_OUTPUT
+
       - name: Set up R
         if: steps.check-cache.outputs.cache-hit != 'true' && steps.check-env-files.outputs.r == 'true'
         uses: r-lib/actions/setup-r@v2
         with:
-          r-version: '4.5.0'
+          r-version: ${{ steps.extract-r-version.outputs.r-version }}
           Ncpus: 2
 
       - name: install any manual dependencies from setup-env-ci.sh
