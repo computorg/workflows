@@ -38,6 +38,34 @@ jobs:
       - name: Install dependencies
         run: sudo apt update && sudo apt install -y cmake libcairo2-dev libfontconfig1-dev libfreetype6-dev pandoc libharfbuzz-dev libfribidi-dev libfreetype6-dev libpng-dev libtiff5-dev libjpeg-dev
       
+      - name: Extract Julia version from Manifest.toml
+        id: extract-julia-version
+        run: |
+          if [[ -f Project.toml ]]; then
+            JULIA_VERSION=""
+            if [[ -f Manifest.toml ]]; then
+              JULIA_VERSION=$(sed -n 's/^julia_version *= *"\(.*\)"/\1/p' Manifest.toml | head -n 1)
+            fi
+            if [[ -z "$JULIA_VERSION" ]]; then
+              JULIA_VERSION="1"
+            fi
+            echo "julia-version=$JULIA_VERSION" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Set up Julia
+        if: steps.extract-julia-version.outputs.julia-version != ''
+        uses: julia-actions/setup-julia@v2
+        with:
+          version: ${{ steps.extract-julia-version.outputs.julia-version }}
+
+      # Quarto's julia engine refuses a notebook whose manifest was resolved with another Julia:
+      # render with the version just installed, not with the one the runner image ships
+      - name: Install Julia dependencies and point Quarto to this Julia
+        if: steps.extract-julia-version.outputs.julia-version != ''
+        run: |
+          julia --project=. -e 'using Pkg; Pkg.instantiate()'
+          echo "QUARTO_JULIA=$(which julia)" >> $GITHUB_ENV
+
       - name: run any post-setup commands from setup-render-ci.sh
         run: |
           if [[ -f setup-render-ci.sh ]]; then
