@@ -22,9 +22,7 @@ jobs:
               /opt/R
               /usr/local/bin/R
               /usr/local/bin/Rscript
-            paths-julia: |
-              Manifest.toml
-              Project.toml
+            paths-julia: $HOME/.julia
 
         run: |
           touch activate_env.sh
@@ -59,6 +57,9 @@ jobs:
             echo "julia=true" >> $GITHUB_OUTPUT
             echo "${{ env.paths-julia }}" >> paths.sh
             cat Project.toml >> tohash.txt
+            if [[ -f Manifest.toml ]]; then
+              cat Manifest.toml >> tohash.txt
+            fi
           fi        
 
           cachepath=$(jq -crRs '@json' <<< "$(cat paths.sh)")
@@ -95,11 +96,24 @@ jobs:
           r-version: ${{ steps.extract-r-version.outputs.r-version }}
           Ncpus: 2
 
+      - name: Extract Julia version from Manifest.toml
+        id: extract-julia-version
+        if: steps.check-env-files.outputs.julia == 'true'
+        run: |
+          JULIA_VERSION=""
+          if [[ -f Manifest.toml ]]; then
+            JULIA_VERSION=$(sed -n 's/^julia_version *= *"\(.*\)"/\1/p' Manifest.toml | head -n 1)
+          fi
+          if [[ -z "$JULIA_VERSION" ]]; then
+            JULIA_VERSION="1"
+          fi
+          echo "julia-version=$JULIA_VERSION" >> $GITHUB_OUTPUT
+
       - name: Set up Julia
         if: steps.check-env-files.outputs.julia == 'true'
         uses: julia-actions/setup-julia@v2
         with:
-          version: '1.11'
+          version: ${{ steps.extract-julia-version.outputs.julia-version }}
 
       - name: Install Julia Dependencies (no cache)
         if: steps.check-env-files.outputs.julia == 'true'
