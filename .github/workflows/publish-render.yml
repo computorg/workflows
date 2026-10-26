@@ -5,15 +5,15 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     permissions:
       contents: write
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Restore artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v7
         with: 
           name: artifact-env
           path: ${{ runner.temp }}/
@@ -23,7 +23,7 @@ jobs:
         run: source ${{ runner.temp }}/activate_env.sh
 
       - name: Restore Cache environment
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           fail-on-cache-miss: true
           path: |
@@ -54,7 +54,7 @@ jobs:
 
       - name: Set up Julia
         if: steps.extract-julia-version.outputs.julia-version != ''
-        uses: julia-actions/setup-julia@v2
+        uses: julia-actions/setup-julia@v3
         with:
           version: ${{ steps.extract-julia-version.outputs.julia-version }}
 
@@ -87,9 +87,11 @@ jobs:
           fi
           
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: ./public
+          # since v4 dotfiles are left out by default; keep publishing them as before
+          include-hidden-files: true
 
   # Deployment job
   deploy:
@@ -101,11 +103,11 @@ jobs:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     needs: build
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
