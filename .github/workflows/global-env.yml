@@ -9,7 +9,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: check environment files
         id: check-env-files
@@ -74,7 +74,7 @@ jobs:
                     
       - name: Check Cache already exists
         id: check-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: |
             ${{ fromJson(steps.check-env-files.outputs.cache-path) }}
@@ -113,7 +113,7 @@ jobs:
 
       - name: Set up Julia
         if: steps.check-env-files.outputs.julia == 'true'
-        uses: julia-actions/setup-julia@v2
+        uses: julia-actions/setup-julia@v3
         with:
           version: ${{ steps.extract-julia-version.outputs.julia-version }}
 
@@ -136,7 +136,7 @@ jobs:
   
       - name: Set up micromamba (no cache)
         if: steps.check-cache.outputs.cache-hit != 'true' && steps.check-env-files.outputs.python == 'true'
-        uses: mamba-org/setup-micromamba@v2
+        uses: mamba-org/setup-micromamba@v3
         with:
           environment-file: ${{ steps.check-env-files.outputs.env-file }}
           environment-name: micromamba
@@ -145,14 +145,14 @@ jobs:
 
       - name: Check Cache
         if: steps.check-cache.outputs.cache-hit != 'true'
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
             path: |
                 ${{ fromJson(steps.check-env-files.outputs.cache-path) }}
             key: ${{ steps.check-env-files.outputs.key }}
   
       - name: Deploy an artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with: 
           name: artifact-env
           path: activate_env.sh
