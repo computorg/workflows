@@ -5,7 +5,7 @@ on:
 
 jobs:
   dependencies:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout repository
@@ -66,6 +66,8 @@ jobs:
           echo "cache-path=$cachepath" >> $GITHUB_OUTPUT
           echo "echo cache-path='$cachepath' >> \$GITHUB_OUTPUT" >> activate_env.sh
 
+          # Never reuse an environment built on another runner image (e.g. ubuntu24)
+          echo "runner image: ${ImageOS:-unknown}" >> tohash.txt
           sha256=$(shasum -a 256 tohash.txt | awk '{ print $1 }')
           echo "key=$sha256" >> $GITHUB_OUTPUT
           echo "echo \"key=$sha256\" >> \$GITHUB_OUTPUT" >> activate_env.sh
