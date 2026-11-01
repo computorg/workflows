@@ -32,6 +32,10 @@ jobs:
 
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
+        env:
+          # Installing TinyTeX queries the GitHub API; unauthenticated, the
+          # weekly rebuilds all starting together hit its rate limit (403)
+          GH_TOKEN: ${{ github.token }}
         with:
           tinytex: true
 
